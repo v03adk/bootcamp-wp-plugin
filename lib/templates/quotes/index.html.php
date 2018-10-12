@@ -15,7 +15,7 @@
 			<?php foreach ($quotes as $quote): ?>
 				<tr>
 					<td>
-						<?php echo $quote['author']['firstname'], ' ', $quote['author']['lastname'] ?>
+						<?php echo sprintf('%s %s %s', $quote['author']['firstname'], $quote['author']['middlename'], $quote['author']['lastname']); ?>
 					</td>
 					<td>
 						<?php echo $quote['quote'] ?>

@@ -27,10 +27,10 @@
 				</tr>
 				<tr>
 					<td>
-						Last name *
+						Last name
 					</td>
 					<td>
-						<input name="author[lastname]" value="<?php if ($author) echo $author['lastname']; ?>" required />
+						<input name="author[lastname]" value="<?php if ($author) echo $author['lastname']; ?>"/>
 					</td>
 				</tr>
 				<tr>

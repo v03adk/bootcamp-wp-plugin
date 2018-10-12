@@ -73,7 +73,7 @@ class BootcampWpPluginQuotes
 		if ($data['status'] === 'ok') {
 			return [
 				'quote' => $data['data']['quote'],
-				'author' => sprintf('%s %s', $data['data']['author']['firstname'], $data['data']['author']['lastname'])
+				'author' => sprintf('%s %s %s', $data['data']['author']['firstname'], $data['data']['author']['middlename'], $data['data']['author']['lastname'])
 			];
 		}
 

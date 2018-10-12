@@ -2,7 +2,7 @@
 
 class BootcampBackendApiClient
 {
-	const baseUrl = 'http://bootcamp.local/api/';
+	const baseUrl = 'http://bootcamp-backend.unnam.de/api/';
 
 	private $apiKey;
 
