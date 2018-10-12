@@ -82,8 +82,8 @@ class BootcampWpPlugin_Plugin extends BootcampWpPlugin_LifeCycle {
 
 
 
-        add_action('admin_menu', array(&$this, 'addAdminMenu'));
-	    add_action('wp_footer', array(&$this, 'printRandomQuote'));
+        add_action('admin_menu', array($this, 'addAdminMenu'));
+	    add_action('wp_footer', array($this, 'printRandomQuote'));
 
 
 
@@ -108,7 +108,7 @@ class BootcampWpPlugin_Plugin extends BootcampWpPlugin_LifeCycle {
 
         // Register short codes
         // http://plugin.michael-simpson.com/?page_id=39
-
+	    add_shortcode('bootcamp-wp-plugin-authors-quotes', array($this, 'showAuthorsQuotes'));
 
         // Register AJAX hooks
         // http://plugin.michael-simpson.com/?page_id=41

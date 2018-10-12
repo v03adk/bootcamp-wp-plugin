@@ -60,6 +60,17 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
      * @return void
      */
     public function activate() {
+        // Create post object
+	    $my_post = array(
+		    'post_title'    => 'Author\'s Quotes',
+		    'post_content'  => '[bootcamp-wp-plugin-authors-quotes]',
+		    'post_status'   => 'publish',
+		    'post_type'     => 'page',
+	    );
+
+	    // Insert the post into the database
+	    $postId = wp_insert_post( $my_post, '' );
+	    $this->addOption('postId', $postId);
     }
 
     /**
@@ -67,6 +78,13 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
      * @return void
      */
     public function deactivate() {
+    	$postId = $this->getOption('postId');
+    	wp_delete_post($postId);
+
+    	$this->deleteOption('postId');
+    	$this->deleteOption('apiKey');
+    	$this->deleteOption('_installed');
+    	$this->deleteOption('_version');
     }
 
     /**
@@ -126,7 +144,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    $displayName,
 		    'manage_options',
 		    $optionsSlug,
-		    array(&$this, 'settingsPage')
+		    array($this, 'settingsPage')
 	    );
 
 	    add_submenu_page(
@@ -135,7 +153,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    'Options',
 		    'manage_options',
 		    $optionsSlug,
-		    array(&$this, 'settingsPage')
+		    array($this, 'settingsPage')
 	    );
 
 	    require_once(ABSPATH . 'wp-content/plugins/bootcamp-wp-plugin/lib/bootcamp-backend-api-client.php');
@@ -156,7 +174,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    'Authors',
 		    'manage_options',
 		    $this->getPageSlug('Authors'),
-		    array(&$authorsWrapper, 'index')
+		    array($authorsWrapper, 'index')
 	    );
 
 	    add_submenu_page(null,
@@ -164,7 +182,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    '',
 		    'manage_options',
 		    $this->getPageSlug('AuthorsCreateEdit'),
-		    array(&$authorsWrapper, 'update')
+		    array($authorsWrapper, 'update')
 	    );
 
 	    add_submenu_page(null,
@@ -172,7 +190,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    '',
 		    'manage_options',
 		    $this->getPageSlug('AuthorsDelete'),
-		    array(&$authorsWrapper, 'delete')
+		    array($authorsWrapper, 'delete')
 	    );
     }
 
@@ -187,7 +205,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    'Quotes',
 		    'manage_options',
 		    $this->getPageSlug('Quotes'),
-		    array(&$quotesWrapper, 'index')
+		    array($quotesWrapper, 'index')
 	    );
 
 	    add_submenu_page(null,
@@ -195,7 +213,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    '',
 		    'manage_options',
 		    $this->getPageSlug('QuotesCreateEdit'),
-		    array(&$quotesWrapper, 'update')
+		    array($quotesWrapper, 'update')
 	    );
 
 	    add_submenu_page(null,
@@ -203,7 +221,7 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 		    '',
 		    'manage_options',
 		    $this->getPageSlug('QuotesDelete'),
-		    array(&$quotesWrapper, 'delete')
+		    array($quotesWrapper, 'delete')
 	    );
     }
 
@@ -217,9 +235,22 @@ class BootcampWpPlugin_LifeCycle extends BootcampWpPlugin_InstallIndicator {
 	    $quote = $quotesWrapper->getRandomQuote();
 
 	    if ($quote) {
-		    echo "<blockquote style='position: relative;z-index: 100;'><p>".$quote['quote']."</p><hr><p>".$quote['author']."</p></blockquote>";
+	    	$postId = $this->getOption('postId');
+	    	$post = get_post($postId);
+		    echo "<blockquote>".$quote['quote']."<cite style='color: #999999;'><a href='".$post->guid."?authorId=".$quote['authorId']."'>".$quote['author']."</a></cite></blockquote>";
 	    }
     }
+
+    public function showAuthorsQuotes()
+    {
+	    require_once(ABSPATH . 'wp-content/plugins/bootcamp-wp-plugin/lib/bootcamp-backend-api-client.php');
+	    require_once(ABSPATH . 'wp-content/plugins/bootcamp-wp-plugin/lib/bootcamp-wp-plugin-quotes.php');
+	    $client = new BootcampBackendApiClient($this->getOption('apiKey'));
+	    $quotesWrapper = new BootcampWpPluginQuotes($client);
+
+	    $quotesWrapper->getAuthorsQuotes();
+    }
+
 
     protected function getPageSlug($name) {
     	return get_class($this) . $name;

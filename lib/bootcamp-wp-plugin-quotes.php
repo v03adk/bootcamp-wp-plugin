@@ -73,10 +73,29 @@ class BootcampWpPluginQuotes
 		if ($data['status'] === 'ok') {
 			return [
 				'quote' => $data['data']['quote'],
-				'author' => sprintf('%s %s %s', $data['data']['author']['firstname'], $data['data']['author']['middlename'], $data['data']['author']['lastname'])
+				'author' => sprintf('%s %s %s', $data['data']['author']['firstname'], $data['data']['author']['middlename'], $data['data']['author']['lastname']),
+				'authorId' => $data['data']['author']['id']
 			];
 		}
 
 		return false;
+	}
+
+	public function getAuthorsQuotes()
+	{
+		$authorId = $_GET['authorId'];
+
+		if ($authorId) {
+			$data = $this->client->callApi('quotes?author='.$authorId, 'GET');
+			if ($data['status'] === 'ok') {
+				$quotes = $data['data'];
+				ob_start();
+				require_once('templates/quotes/author_quotes.html.php');
+
+				echo ob_get_clean();
+			}
+		}
+
+		echo '';
 	}
 }
