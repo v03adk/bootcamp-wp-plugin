@@ -14,6 +14,7 @@ Implemented:
 - show all author's quotes on separate page
 
 Not implemented:
+- pagination in both CRUD
 - perfect UI
 
 TODO:
